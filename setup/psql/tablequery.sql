@@ -58,16 +58,16 @@ CREATE TABLE revenues (
 );
 
 -- copy data from budgets.csv file into the budgets table
-COPY budgets (budget_id, dt_create, dt_update, dt_value, category, amount)
-FROM 'budgets.csv'
-WITH (FORMAT csv, HEADER true, DELIMITER ';');
+\COPY budgets (budget_id, dt_create, dt_update, dt_value, category, amount)
+FROM 'setup/psql/budgets.csv'
+WITH (FORMAT CSV, HEADER true, DELIMITER ';');
 
 -- copy data from expenses.csv file into the expenses table
-COPY expenses (ulid_id, dt_create, dt_update, dt_value, amount, description, budget_id, category)
-FROM 'expenses.csv'
-WITH (FORMAT csv, HEADER true, DELIMITER ';');
+\COPY expenses (ulid_id, dt_create, dt_update, dt_value, amount, description, budget_id, category)
+FROM 'setup/psql/expenses.csv'
+WITH (FORMAT CSV, HEADER true, DELIMITER ';');
 
 -- copy data from revenues.csv file into the revenues table
-COPY revenues (ulid_id, dt_create, dt_update, dt_value, amount, description)
-FROM 'revenues.csv'
-WITH (FORMAT csv, HEADER true, DELIMIT ';');
+\COPY revenues (ulid_id, dt_create, dt_update, dt_value, amount, description)
+FROM 'setup/psql/revenues.csv'
+WITH (FORMAT CSV, HEADER true, DELIMITER ';');
