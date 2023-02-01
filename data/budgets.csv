@@ -1,4 +1,4 @@
-﻿id;dt_create;dt_update;dt_value;category;amount
+﻿budget_id;dt_create;dt_update;dt_value;category;amount
 2021-01 Monthly Housing Budget;2021-01-02T00:00:01.000Z;2021-01-02T00:00:01.000Z;2021-01-02T00:00:01.000Z;housing;525
 2021-01 Monthly Transportation Budget;2021-01-02T00:01:02.000Z;2021-01-02T00:01:02.000Z;2021-01-02T00:01:02.000Z;transportation;200
 2021-01 Monthly Utilities Budget;2021-01-02T00:02:03.000Z;2021-01-02T00:02:03.000Z;2021-01-02T00:02:03.000Z;utilities;150

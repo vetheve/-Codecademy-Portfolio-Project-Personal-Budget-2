@@ -1,0 +1,48 @@
+openapi: 3.0.3
+info:
+  title: Envelope Budgeting API
+  version: 1.0.0
+  description: >-
+    This project is a personal budget API that uses Envelope Budgeting
+    principles to allow clients to manage their budget. It will be developed
+    with Node.js/Express, PostgreSQL, and Sequelize and follow REST
+    conventions. 
+paths:
+  /budgets:
+    summary: Envelope Budgeting records
+    description: >-
+      Request all budgets and send them in the response. If the budgets are not
+      found, send an error message.
+    get:
+      summary: Get all bugets
+      description: >-
+        Retrieves all budgets and sends them as a response. If not found, sends
+        error message.
+      operationId: getBudgets
+      responses:
+        '200':
+          description: Default error sample response
+          content:
+            application/json:
+              examples:
+                budgets:
+                  value: >-
+                    {"budgets":[{"id":"2021-01 Monthly Housing
+                    Budget","dt_create":"2021-01-02T00:00:01.000Z","dt_update":"2021-01-02T00:00:01.000Z","dt_value":"2021-01-02T00:00:01.000Z","category":"housing","amount":"525"},{"id":"2021-01
+                    Monthly Transportation
+                    Budget","dt_create":"2021-01-02T00:01:02.000Z","dt_update":"2021-01-02T00:01:02.000Z","dt_value":"2021-01-02T00:01:02.000Z","category":"transportation","amount":"200"},{"id":"2021-01
+                    Monthly Utilities
+                    Budget","dt_create":"2021-01-02T00:02:03.000Z","dt_update":"2021-01-02T00:02:03.000Z","dt_value":"2021-01-02T00:02:03.000Z","category":"utilities","amount":"150"}]}
+      tags:
+        - All budgets
+    post:
+      summary: Add a new budget
+      description: >-
+        Attempts to add a new budget and sends the added budget as response. If
+        fails, sends error message.
+      operationId: putBudget
+      responses:
+        201:
+          description: Default error sample response
+      tags:
+        - New budget
