@@ -1,9 +1,3 @@
--- create a database named "Balance_budget"
-CREATE DATABASE Balance_budget;
-
--- connect to the newly created database
-\c Balance_budget
-
 -- create table named "budgets"
 CREATE TABLE budgets (
   -- auto-incrementing id field
