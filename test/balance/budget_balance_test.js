@@ -1,6 +1,6 @@
 const test = require("ava");  // Importing the AVA test library
 const request = require("supertest");  // Importing the supertest library for making HTTP requests
-const apiRouter = require('./../server/api.js');  // Importing the api router file for the all the routers
+const apiRouter = require('../../server/api.js');  // Importing the api router file for the all the routers
 const express = require('express'); // Importing express
 
 // Create an instance of the express application
@@ -12,7 +12,7 @@ app.use('/', apiRouter);
 // Import functions from db.js
 const {
     getFromDatabaseByItem
-} = require('./../server/db.js');
+} = require('../../server/db.js');
 
 
 /*BUDGET BALANCE*/
@@ -30,8 +30,8 @@ test('5.1 Get /budgetbalance should returns the total budget balance', async t =
     t.log(res.body)
         
     // Asserting that the response body is an object and contains the key 'Budget balance'
-    t.true(typeof res.body === 'object' && 'Budget balance' in res.body);
+    t.true(typeof res.body === 'object' && 'budget_balance' in res.body);
     
     // Asserting that the value of the 'Budget balance' key is 4140
-    t.is(res.body['Budget balance'], 4140);
+    t.is(res.body['budget_balance'], '4140');
 });
