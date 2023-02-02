@@ -33,6 +33,7 @@ budgetBalanceRouter
     .get((req, res) => {
         // Connect to the PostgreSQL database using the connection pool
         pool.query(`
+      -- Define the subquery to calculate the total amount of budgets
       WITH budget_total AS (
       SELECT SUM(amount) as total_budgets
       FROM budgets),
@@ -55,26 +56,173 @@ budgetBalanceRouter
         });
     });
 
-  
-// Endpoint to handle requests for the total budget balance by year and month
-budgetBalanceRouter
-  .route('/:year/:month')
-  // Get the total budget balance for a specific year and month
-
 // Endpoint to handle requests for the balance by year  
 budgetBalanceRouter
-  .route('/:year')
-  // Get the total budget balance for a specific year
+    .route('/:year')
+    // Get the total budget balance for a specific year
+    .get((req, res) => {
+        const year = parseInt(req.params.year);
+        // Connect to the PostgreSQL database using the connection pool
+        pool.query(`
+      -- Define the subquery to calculate the total amount of budgets
+      WITH budget_total AS (
+      SELECT SUM(amount) as total_budgets
+      FROM budgets
+      WHERE extract(year from dt_value) = $1),
+      -- Define the subquery to calculate the total amount of expenses
+      expense_total AS (
+      SELECT SUM(amount) as total_expenses
+      FROM expenses
+      WHERE extract(year from dt_value) = $1)
+      -- Calculate the budget balance by subtracting the total expenses from the total budgets
+      SELECT total_budgets - total_expenses as budget_balance
+      FROM budget_total, expense_total;`, [year], (err, result) => {
+            if (err) {
+                // If there was an error, return a 500 status code with an error message
+                res.status(500).json({
+                    error: "Error fetching budget balance"
+                });
+            } else {
+                // If the query was successful, return a 200 status code with the result
+                res.status(200).json(result.rows[0]);
+            }
+        });
+    });
+  
 
+// Endpoint to handle requests for the total budget balance by year and month
 budgetBalanceRouter
-  .route('/:category')
-  // Get the total budget balance for a specific category
+    .route('/:year/:month')
+    // Get the total budget balance for a specific year and month
+    .get((req, res) => {
+        const year = parseInt(req.params.year);
+        const month = parseInt(req.params.month);
+        // Connect to the PostgreSQL database using the connection pool
+        pool.query(`
+      -- Define the subquery to calculate the total amount of budgets
+      WITH budget_total AS (
+      SELECT SUM(amount) as total_budgets
+      FROM budgets
+      WHERE extract(year from dt_value) = $1 AND extract(month from dt_value) = $2),
+      -- Define the subquery to calculate the total amount of expenses
+      expense_total AS (
+      SELECT SUM(amount) as total_expenses
+      FROM expenses
+      WHERE extract(year from dt_value) = $1 AND extract(month from dt_value) = $2)
+      -- Calculate the budget balance by subtracting the total expenses from the total budgets
+      SELECT total_budgets - total_expenses as budget_balance
+      FROM budget_total, expense_total;`, [year, month], (err, result) => {
+            if (err) {
+                // If there was an error, return a 500 status code with an error message
+                res.status(500).json({
+                    error: "Error fetching budget balance"
+                });
+            } else {
+                // If the query was successful, return a 200 status code with the result
+                res.status(200).json(result.rows[0]);
+            }
+        });
+    });
 
+// Endpoint to handle requests for the balance by category 
 budgetBalanceRouter
-  .route('/:year/:category')
-  // Get the total budget balance for a specific category and by year
+    .route('/:category')
+    // Get the total budget balance for a specific category
+    .get((req, res) => {
+        const category = req.params.category;
+        // Connect to the PostgreSQL database using the connection pool
+        pool.query(`
+      -- Define the subquery to calculate the total amount of budgets
+      WITH budget_total AS (
+      SELECT SUM(amount) as total_budgets
+      FROM budgets
+      WHERE category = $1),
+      -- Define the subquery to calculate the total amount of expenses 
+      expense_total AS (
+      SELECT SUM(amount) as total_expenses
+      FROM expenses
+      WHERE category = $1)
+      -- Calculate the budget balance by subtracting the total expenses from the total budgets
+      SELECT total_budgets - total_expenses as budget_balance
+      FROM budget_total, expense_total;`, [category], (err, result) => {
+            if (err) {
+                // If there was an error, return a 500 status code with an error message
+                res.status(500).json({
+                    error: "Error fetching budget balance"
+                });
+            } else {
+                // If the query was successful, return a 200 status code with the result
+                res.status(200).json(result.rows[0]);
+            }
+        });
+    });
 
-  budgetBalanceRouter
-  .route('/:year/:month/:category')
-  // Get the total budget balance for a specific category and by year and month
 
+// Endpoint to handle requests for the balance by year and category 
+budgetBalanceRouter
+    .route('/:year/:category')
+    // Get the total budget balance for a specific category and by year
+    .get((req, res) => {
+        const year = parseInt(req.params.year);
+        const category = req.params.category;
+        // Connect to the PostgreSQL database using the connection pool
+        pool.query(`
+      -- Define the subquery to calculate the total amount of budgets
+      WITH budget_total AS (
+      SELECT SUM(amount) as total_budgets
+      FROM budgets
+      WHERE extract(year from dt_value) = $1 AND category = $2),
+      -- Define the subquery to calculate the total amount of expenses
+      expense_total AS (
+      SELECT SUM(amount) as total_expenses
+      FROM expenses
+      WHERE extract(year from dt_value) = $1 AND category = $2)
+      -- Calculate the budget balance by subtracting the total expenses from the total budgets
+      SELECT total_budgets - total_expenses as budget_balance
+      FROM budget_total, expense_total;`, [year, category], (err, result) => {
+            if (err) {
+                // If there was an error, return a 500 status code with an error message
+                res.status(500).json({
+                    error: "Error fetching budget balance"
+                });
+            } else {
+                // If the query was successful, return a 200 status code with the result
+                res.status(200).json(result.rows[0]);
+            }
+        });
+    });
+
+// Endpoint to handle requests for the balance by year and category     
+budgetBalanceRouter
+    .route('/:year/:month/:category')
+    // Get the total budget balance for a specific category and by year and month
+    .get((req, res) => {
+        const year = parseInt(req.params.year);
+        const month = parseInt(req.params.month);
+        const category = req.params.category;
+        // Connect to the PostgreSQL database using the connection pool
+        pool.query(`
+      -- Define the subquery to calculate the total amount of budgets
+      WITH budget_total AS (
+      SELECT SUM(amount) as total_budgets
+      FROM budgets
+      WHERE extract(year from dt_value) = $1 AND extract(month from dt_value) = $2 AND category = $3),
+      -- Define the subquery to calculate the total amount of expenses
+      expense_total AS (
+      SELECT SUM(amount) as total_expenses
+      FROM expenses
+      WHERE extract(year from dt_value) = $1 AND extract(month from dt_value) = $2  AND category = $3)
+      -- Calculate the budget balance by subtracting the total expenses from the total budgets
+      SELECT total_budgets - total_expenses as budget_balance
+      FROM budget_total, expense_total;`, [year, month, category], (err, result) => {
+            if (err) {
+                // If there was an error, return a 500 status code with an error message
+                res.status(500).json({
+                    error: "Error fetching budget balance"
+                });
+            } else {
+                // If the query was successful, return a 200 status code with the result
+                res.status(200).json(result.rows[0]);
+            }
+        });
+    });
