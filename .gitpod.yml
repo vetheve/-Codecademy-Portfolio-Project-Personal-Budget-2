@@ -16,7 +16,8 @@ tasks:
   - init: npm install --save-dev supertest
   - init : sudo apt install tree
   - init : sudo apt-get update
-  - init : sudo apt-get install postgresql-client
+  - init : sudo apt-get install postgresql postgresql-contrib
+#  - init : sudo apt-get install postgresql-client
 #sudo apt-get update && sudo apt-get install postgresql postgresql-contrib
 image: gitpod/workspace-postgres
 
