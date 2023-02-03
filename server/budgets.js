@@ -72,6 +72,7 @@ budgetsRouter
 
         // Execute a query to insert the new budget into the budgets table
         pool.query(`
+        -- Define the subquery to insert a new record into the budgets table
         INSERT INTO budgets (budget_id, dt_create, dt_update, dt_value, category, amount)
         VALUES ($1, to_timestamp($2, 'YYYY-MM-DD"T"HH24:MI:SS.MS'), to_timestamp($3, 'YYYY-MM-DD"T"HH24:MI:SS.MS'), to_timestamp($4, 'YYYY-MM-DD"T"HH24:MI:SS.MS'), $5, $6);
     `, [element.budget_id, element.dt_create, element.dt_update, element.dt_value, element.category, element.amount], (err, result) => {
@@ -81,7 +82,7 @@ budgetsRouter
                     error: "Error adding budget"
                 });
             }
-            // If the query is successful, return a 200 status code with a success message
+            // If the query is successful, return a 201 status code with a success message
             else {
                 res.status(201).json({
                     message: "Budget added successfully"
@@ -95,14 +96,21 @@ budgetsRouter
     .route('/:id')
     // Get a specific budget by ID
     .get((req, res) => {
-        const getBudget = getFromDatabaseById(req.params.id)
-        if (getBudget) {
-            res.status(200).send(getBudget);
-        } else {
-            res.status(404).send({
-                error: "ID: Budget not found"
-            });
-        }
+        const budget_id = req.params.id
+        // Connect to the PostgreSQL database using the connection pool
+        pool.query(`
+      -- Define the subquery to get a specific budget resource by ID
+      SELECT * FROM budgets WHERE budget_id  = $1;`, [budget_id], (err, result) => {
+            if (err) {
+                // If there was an error, return a 500 status code with an error message
+                res.status(500).json({
+                    error: "Error fetching budgets"
+                });
+            } else {
+                // If the query was successful, return a 200 status code with the result
+                res.status(200).json(result.rows[0]);
+            }
+        });
     })
     // Update an existing budget in the list
     .put((req, res) => {
