@@ -32,14 +32,14 @@ test('1.1 GET /budgets should return an array of all budgets', async t => {
     //t.log(res.body)
 });
 
-// Test to check if the GET request to '/budgets/:id' route returns a specific budget by ID
-test('1.2 GET /budgets/:id should retrieve a specific budget with the given ID', async t => {
+// Test to check if the GET request to '/budgets/id/:id' route returns a specific budget by ID
+test('1.2 GET /budgets/id/:id should retrieve a specific budget with the given ID', async t => {
 
     // Selecting a budget ID to test with
     const budgetId = '2021-01 Monthly Housing Budget';
     
     // Making a GET request to the '/budgets/:id' route with the selected budget ID
-    const res = await request(app).get(`/budgets/${budgetId}`);
+    const res = await request(app).get(`/budgets/id/${budgetId}`);
     
     // Asserting that the status code of the response is 200
     t.is(res.status, 200);

@@ -93,7 +93,7 @@ budgetsRouter
 
 // Endpoint to handle requests to a specific budget resource by ID
 budgetsRouter
-    .route('/:id')
+    .route('/id/:id')
     // Get a specific budget by ID
     .get((req, res) => {
         const budget_id = req.params.id

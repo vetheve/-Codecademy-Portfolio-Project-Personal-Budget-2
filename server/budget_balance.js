@@ -58,7 +58,7 @@ budgetBalanceRouter
 
 // Endpoint to handle requests for the balance by year  
 budgetBalanceRouter
-    .route('/:year')
+    .route('/period/:year')
     // Get the total budget balance for a specific year
     .get((req, res) => {
         const year = parseInt(req.params.year);
@@ -92,7 +92,7 @@ budgetBalanceRouter
 
 // Endpoint to handle requests for the total budget balance by year and month
 budgetBalanceRouter
-    .route('/:year/:month')
+    .route('/period/:year/:month')
     // Get the total budget balance for a specific year and month
     .get((req, res) => {
         const year = parseInt(req.params.year);
@@ -126,7 +126,7 @@ budgetBalanceRouter
 
 // Endpoint to handle requests for the balance by category 
 budgetBalanceRouter
-    .route('/:category')
+    .route('/category/:category')
     // Get the total budget balance for a specific category
     .get((req, res) => {
         const category = req.params.category;
@@ -160,7 +160,7 @@ budgetBalanceRouter
 
 // Endpoint to handle requests for the balance by year and category 
 budgetBalanceRouter
-    .route('/:year/:category')
+    .route('/period/:year/category/:category')
     // Get the total budget balance for a specific category and by year
     .get((req, res) => {
         const year = parseInt(req.params.year);
@@ -194,7 +194,7 @@ budgetBalanceRouter
 
 // Endpoint to handle requests for the balance by year and category     
 budgetBalanceRouter
-    .route('/:year/:month/:category')
+    .route('/period/:year/:month/:category')
     // Get the total budget balance for a specific category and by year and month
     .get((req, res) => {
         const year = parseInt(req.params.year);
