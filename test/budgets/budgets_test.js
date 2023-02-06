@@ -75,3 +75,42 @@ test('1.3 POST /budgets should add a new budget to the list', async t => {
 
 });
 */
+
+// Test to check if the PUT request to '/budgets/id/:id' route updates a budget in the list budgets
+test('1.4 PUT /budgets/id/:id should update a budget in the list', async t => {
+
+    // Selecting a budget ID to test with
+    const budgetId = "2022-02 Personnal Budget";
+
+    // Creating a new budget object to update
+    const updatedBudget = {
+        budget_id: budgetId,
+        item: "category",
+        value: "Very personnal"
+    };
+    
+    // Making a PUT request to the '/budgets/:id' route with the updated budget object
+    const res = await request(app).put(`/budgets/id/${budgetId}`).send(updatedBudget);
+
+    // Asserting that the status code of the response is 201
+    t.is(res.status, 201);
+
+    // Print the object in the console
+    t.log(res.body)
+});
+
+
+/*
+// Test to check if the DELETE request to '/budgets' route delete a specific budget by ID
+test('1.5 DELETE /budgets/:id should delete a specific budget with the given ID', async t => {
+
+    // Selecting a budget ID to test with
+    const budgetId = '2022-02 Personnal Budget';
+    
+    // Making a DELETE request to the '/budgets/:id' route with the selected budget ID
+    const res = await request(app).delete(`/budgets/${budgetId}`);
+    
+    // Asserting that the status code of the response is 204
+    t.is(res.status, 204);
+});
+*/

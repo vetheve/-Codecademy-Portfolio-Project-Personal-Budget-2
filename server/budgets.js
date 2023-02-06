@@ -114,14 +114,45 @@ budgetsRouter
     })
     // Update an existing budget in the list
     .put((req, res) => {
-        const updatedBudget = updateInstanceInDatabase('budgets',req.params.id, req.body.item, req.body.value);
-        if (updatedBudget) {
-            res.status(200).send(updatedBudget);
-        } else {
-            res.status(404).send({
-                error: "Failed to update budget"
-            });
-        }
+        // Destructure budget_id, item, and value from the request body
+        const {
+            budget_id,
+            item,
+            value
+        } = req.body;
+
+        // Generate a timestamp and convert it to an ISO string format
+        const timestamp = Date.now();
+        const isoString = new Date(timestamp).toISOString();
+
+        // Create a budget object with the provided information and default timestamp and ID values
+        const element = {
+            budget_id: budget_id,
+            item: item,
+            value: value,
+            dt_update: isoString
+        };
+
+        // Execute a query to update the existing budget in the budgets table
+        pool.query(`
+        -- Define the subquery to update an existing record in the budgets table
+        UPDATE budgets
+        SET $2 = $3, dt_update = to_timestamp($4, 'YYYY-MM-DD"T"HH24:MI:SS.MS')
+        WHERE budget_id = $1;
+        `, [element.budget_id, element.item, element.value, element.dt_update], (err, result) => {
+            // If there is an error, return a 500 status code with an error message
+            if (err) {
+                res.status(500).json({
+                    error: "Error updating budget"
+                });
+            }
+            // If the query is successful, return a 201 status code with a success message
+            else {
+                res.status(201).json({
+                    message: "Budget updated successfully"
+                });
+            }
+        });
     })
     // Delete a specific budget from the list
     .delete((req, res) => {
