@@ -115,8 +115,8 @@ budgetsRouter
     // Update an existing budget in the list
     .put((req, res) => {
         // Destructure budget_id, item, and value from the request body
+        const budget_id = req.params.id
         const {
-            budget_id,
             item,
             value
         } = req.body;
