@@ -5,14 +5,15 @@ const expensesRouter = require('express').Router();
 const bodyParser = require('body-parser');
 expensesRouter.use(bodyParser.json());
 
-// Import functions from db.js
-const {
-    getAllFromDatabase,
-    getFromDatabaseById,
-    addExpenseToDatabase,
-    deleteFromDatabasebyId,
-    updateInstanceInDatabase
-} = require('./db.js')
+// Import the required module for creating a connection pool to a PostgreSQL database
+const Pool = require('pg').Pool
+
+// Create a connection pool instance with the given configuration options
+const pool = new Pool({
+    host: 'localhost',
+    database: 'balance_budget',
+    port: 5432,
+  });
 
 // Export expensesRouter for use in other modules
 module.exports = expensesRouter;
@@ -22,14 +23,20 @@ expensesRouter
   .route('/')
     // Get all expenses
     .get((req, res) => {
-        const allExpenses = getAllFromDatabase('expenses');
-        if (allExpenses) {
-            res.status(200).send(allExpenses);
-        } else {
-            res.status(404).send({
-                error: "No expenses found"
-            });
-        }
+        // Connect to the PostgreSQL database using the connection pool
+        pool.query(`
+      -- Define the subquery to get the total records of expenses
+      SELECT * FROM expenses;`, (err, result) => {
+            if (err) {
+                // If there was an error, return a 500 status code with an error message
+                res.status(500).json({
+                    error: "Error fetching expenses"
+                });
+            } else {
+                // If the query was successful, return a 200 status code with the result
+                res.status(200).json(result.rows);
+            }
+        });
     })
     // Add a new expenses to the list
     .post((req, res) => {
