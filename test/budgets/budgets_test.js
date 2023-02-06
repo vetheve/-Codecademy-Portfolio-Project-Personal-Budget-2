@@ -53,7 +53,7 @@ test('1.2 GET /budgets/id/:id should retrieve a specific budget with the given I
     // Asserting that the response body contains the selected budget ID
     t.true(res.body.budget_id === budgetId);
 });
-/*
+
 // Test to check if the POST request to '/budgets' route add a new budget in the list budgets
 test('1.3 POST /budgets should add a new budget to the list', async t => {
 
@@ -74,7 +74,7 @@ test('1.3 POST /budgets should add a new budget to the list', async t => {
     t.log(res.body)
 
 });
-*/
+
 
 // Test to check if the PUT request to '/budgets/id/:id' route updates a budget in the list budgets
 test('1.4 PUT /budgets/id/:id should update a budget in the list', async t => {
@@ -100,17 +100,16 @@ test('1.4 PUT /budgets/id/:id should update a budget in the list', async t => {
 });
 
 
-/*
+
 // Test to check if the DELETE request to '/budgets' route delete a specific budget by ID
-test('1.5 DELETE /budgets/:id should delete a specific budget with the given ID', async t => {
+test('1.5 DELETE /budgets/id/:id should delete a specific budget with the given ID', async t => {
 
     // Selecting a budget ID to test with
     const budgetId = '2022-02 Personnal Budget';
     
     // Making a DELETE request to the '/budgets/:id' route with the selected budget ID
-    const res = await request(app).delete(`/budgets/${budgetId}`);
+    const res = await request(app).delete(`/budgets/id/${budgetId}`);
     
     // Asserting that the status code of the response is 204
     t.is(res.status, 204);
 });
-*/

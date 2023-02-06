@@ -135,10 +135,10 @@ budgetsRouter
 
         // Execute a query to update the existing budget in the budgets table
         pool.query(`
-        -- Define the subquery to update an existing record in the budgets table
-        UPDATE budgets
-        SET $2 = $3, dt_update = to_timestamp($4, 'YYYY-MM-DD"T"HH24:MI:SS.MS')
-        WHERE budget_id = $1;
+      -- Define the subquery to update an existing record in the budgets table
+      UPDATE budgets
+      SET $2 = $3, dt_update = to_timestamp($4, 'YYYY-MM-DD"T"HH24:MI:SS.MS')
+      WHERE budget_id = $1;
         `, [element.budget_id, element.item, element.value, element.dt_update], (err, result) => {
             // If there is an error, return a 500 status code with an error message
             if (err) {
@@ -156,14 +156,23 @@ budgetsRouter
     })
     // Delete a specific budget from the list
     .delete((req, res) => {
-        const deletedBudget = deleteFromDatabasebyId(req.params.id);
-        if (deletedBudget) {
-            res.status(204).send(deletedBudget);
-        } else {
-            res.status(404).send({
-                error: "Failed to delete budget"
-            });
-        }
+        const budget_id = req.params.id
+        // Connect to the PostgreSQL database using the connection pool
+        pool.query(`
+      -- Define the subquery to delete a specific budget resource by ID
+      DELETE FROM budgets WHERE budget_id = $1;`, [budget_id], (err, result) => {
+            if (err) {
+                // If there was an error, return a 500 status code with an error message
+                res.status(500).json({
+                    error: "Error deleting budget"
+                });
+            } else {
+                // If the query was successful, return a 200 status code with a success message
+                res.status(204).json({
+                    message: 'Budget deleted successfully'
+                });
+            }
+        });
     });
 
   
