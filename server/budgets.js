@@ -93,10 +93,10 @@ budgetsRouter
 
 // Endpoint to handle requests to a specific budget resource by ID
 budgetsRouter
-    .route('/id/:id')
+    .route('/budget_id/:budget_id')
     // Get a specific budget by ID
     .get((req, res) => {
-        const budget_id = req.params.id
+        const budget_id = req.params.budget_id
         // Connect to the PostgreSQL database using the connection pool
         pool.query(`
       -- Define the subquery to get a specific budget resource by ID
@@ -115,7 +115,7 @@ budgetsRouter
     // Update an existing budget in the list
     .put((req, res) => {
         // Destructure budget_id, item, and value from the request body
-        const budget_id = req.params.id
+        const budget_id = req.params.budget_id
         const {
             item,
             value
@@ -156,7 +156,7 @@ budgetsRouter
     })
     // Delete a specific budget from the list
     .delete((req, res) => {
-        const budget_id = req.params.id
+        const budget_id = req.params.budget_id
         // Connect to the PostgreSQL database using the connection pool
         pool.query(`
       -- Define the subquery to delete a specific budget resource by ID
