@@ -81,7 +81,7 @@ test('1.3 POST /budgets should add a new budget to the list', async t => {
 
 
 // Test to check if the PUT request to '/budgets/id/:id' route updates a budget in the list budgets
-test('1.4 PUT /budgets/budget_id/:budget_id should update a budget in the list', async t => {
+test('1.4.1 PUT /budgets/budget_id/:budget_id should update a budget in the list', async t => {
 
     // Selecting a budget ID to test with
     const budgetId = "2022-02 Personnal Budget";
@@ -89,6 +89,8 @@ test('1.4 PUT /budgets/budget_id/:budget_id should update a budget in the list',
     // Creating a new budget object to update
     const updatedBudget = {
         category: "Very personal",
+        amount: "0",
+        dt_value: "2023-02-09 07:47:53.491"
     };
     
     // Making a PUT request to the '/budgets/budget_id/:budget_id' route with the updated budget object
@@ -100,6 +102,7 @@ test('1.4 PUT /budgets/budget_id/:budget_id should update a budget in the list',
     // Print the object in the console
     t.log(res.body)
 });
+
 
 /*
 // Test to check if the DELETE request to '/budgets' route delete a specific budget by ID

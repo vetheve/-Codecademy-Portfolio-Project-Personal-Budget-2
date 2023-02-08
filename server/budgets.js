@@ -141,7 +141,7 @@ budgetsRouter
         const budget_id = req.params.budget_id;
         console.log(budget_id)
         // Destructure the object sent from the request body
-        const { category } = req.body;
+        const { category, amount, dt_value } = req.body;
 
         // Generate a timestamp and convert it to an ISO string format
         const timestamp = Date.now();
@@ -160,9 +160,9 @@ budgetsRouter
                 pool.query(`
                     -- Define the subquery to update an existing record in the budgets table
                     UPDATE budgets
-                    SET category = $1, dt_update = to_timestamp($2, 'YYYY-MM-DD"T"HH24:MI:SS.MS')
-                    WHERE budget_id = $3;
-                `, [category, isoString, budget_id], (err, result) => {
+                    SET category = $1, amount = $2, dt_value = to_timestamp($3, 'YYYY-MM-DD"T"HH24:MI:SS.MS'), dt_update = to_timestamp($4, 'YYYY-MM-DD"T"HH24:MI:SS.MS')
+                    WHERE budget_id = $5;
+                `, [category, amount, dt_value, isoString, budget_id], (err, result) => {
                     // If there is an error, return a 500 status code with an error message
                     if (err) {
                         console.log(err)
