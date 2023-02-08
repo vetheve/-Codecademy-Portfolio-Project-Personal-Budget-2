@@ -38,6 +38,7 @@ budgetsRouter
       SELECT * FROM budgets;`, (err, result) => {
             if (err) {
                 // If there was an error, return a 500 status code with an error message
+                console.log(err)
                 res.status(500).json({
                     error: "Error fetching budgets"
                 });
@@ -78,6 +79,7 @@ budgetsRouter
     `, [element.budget_id, element.dt_create, element.dt_update, element.dt_value, element.category, element.amount], (err, result) => {
             // If there is an error, return a 500 status code with an error message
             if (err) {
+                console.log(err)
                 res.status(500).json({
                     error: "Error adding budget"
                 });
@@ -103,54 +105,13 @@ budgetsRouter
       SELECT * FROM budgets WHERE budget_id  = $1;`, [budget_id], (err, result) => {
             if (err) {
                 // If there was an error, return a 500 status code with an error message
+                console.log(err)
                 res.status(500).json({
                     error: "Error fetching budgets"
                 });
             } else {
                 // If the query was successful, return a 200 status code with the result
                 res.status(200).json(result.rows[0]);
-            }
-        });
-    })
-    // Update an existing budget in the list
-    .put((req, res) => {
-        // Destructure budget_id, item, and value from the request body
-        const budget_id = req.params.budget_id
-        const {
-            item,
-            value
-        } = req.body;
-
-        // Generate a timestamp and convert it to an ISO string format
-        const timestamp = Date.now();
-        const isoString = new Date(timestamp).toISOString();
-
-        // Create a budget object with the provided information and default timestamp and ID values
-        const element = {
-            budget_id: budget_id,
-            item: item,
-            value: value,
-            dt_update: isoString
-        };
-
-        // Execute a query to update the existing budget in the budgets table
-        pool.query(`
-      -- Define the subquery to update an existing record in the budgets table
-      UPDATE budgets
-      SET $2 = $3, dt_update = to_timestamp($4, 'YYYY-MM-DD"T"HH24:MI:SS.MS')
-      WHERE budget_id = $1;
-        `, [element.budget_id, element.item, element.value, element.dt_update], (err, result) => {
-            // If there is an error, return a 500 status code with an error message
-            if (err) {
-                res.status(500).json({
-                    error: "Error updating budget"
-                });
-            }
-            // If the query is successful, return a 201 status code with a success message
-            else {
-                res.status(201).json({
-                    message: "Budget updated successfully"
-                });
             }
         });
     })
@@ -163,6 +124,7 @@ budgetsRouter
       DELETE FROM budgets WHERE budget_id = $1;`, [budget_id], (err, result) => {
             if (err) {
                 // If there was an error, return a 500 status code with an error message
+                console.log(err)
                 res.status(500).json({
                     error: "Error deleting budget"
                 });
@@ -173,6 +135,60 @@ budgetsRouter
                 });
             }
         });
-    });
+    })
+    // Update a category in an existing budget in the budgets table 
+    .put((req, res) => {
+        const budget_id = req.params.budget_id;
+        console.log(budget_id)
+        // Destructure the object sent from the request body
+        const { category } = req.body;
 
-  
+        // Generate a timestamp and convert it to an ISO string format
+        const timestamp = Date.now();
+        const isoString = new Date(timestamp).toISOString();
+
+        // Execute a query to find the existing budget in the budgets table
+        pool.query(`SELECT * from budgets where budget_id = $1`, [budget_id], (err, result) => {
+            // If there is an error, return a 500 status code with an error message
+            if (err) {
+                console.log(err)
+                res.status(500).json({
+                    error: "Error finding budget"
+                });
+            } else if (result.rowCount > 0) {
+                // Execute a query to update the existing budget in the budgets table
+                pool.query(`
+                    -- Define the subquery to update an existing record in the budgets table
+                    UPDATE budgets
+                    SET category = $1, dt_update = to_timestamp($2, 'YYYY-MM-DD"T"HH24:MI:SS.MS')
+                    WHERE budget_id = $3;
+                `, [category, isoString, budget_id], (err, result) => {
+                    // If there is an error, return a 500 status code with an error message
+                    if (err) {
+                        console.log(err)
+                        res.status(500).json({
+                            error: "Error updating budget"
+                        });
+                    }
+                    // If the query is successful, return a 201 status code with a success message
+                    else if (result.rowCount > 0) {
+                        res.status(201).json({
+                            message: "Budget updated successfully"
+                        });
+                    // If there is an error, return a 400 status code with an error message
+                    } else {
+                        console.log(err)
+                        res.status(404).json({
+                            error: "Budget exist but not found "
+                        });
+                    }
+                });
+            // If there is an error, return a 400 status code with an error message
+            } else {
+                console.log(err)
+                res.status(404).json({
+                    error: "Budget not found"
+                });
+            }
+        });
+    });
