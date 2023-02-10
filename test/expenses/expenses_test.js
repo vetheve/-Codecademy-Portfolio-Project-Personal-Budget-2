@@ -50,3 +50,25 @@ test('2.2 GET /expenses/id/:id should retrieve a specific expense with the given
     // Asserting that the response body is an object and contains the selected expense ID
     t.true(typeof res.body === 'object' && res.body.id === expenseId);
 });
+
+
+// Test to check if the POST request to '/expenses' route add a new expense in the list expenses
+test('2.3 POST /expenses should add a new expense to the list', async t => {
+
+    // Creating a new expense object to add
+    const newExpense = {
+        amount: '0',
+        description: 'Malabar',
+        budget_id: "2022-01 Monthly Food Budget",
+        category: "food"       
+    };
+
+    // Making a POST request to the '/expenses' route with the new expense object
+    const res = await request(app).post('/expenses').send(newExpense);
+
+    // Asserting that the status code of the response is 201
+    t.is(res.status, 201);
+
+    // Print the object in the console
+    t.log(res.body)
+});

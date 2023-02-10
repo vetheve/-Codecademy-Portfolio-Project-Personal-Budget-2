@@ -8,6 +8,9 @@ expensesRouter.use(bodyParser.json());
 // Import the required module for creating a connection pool to a PostgreSQL database
 const Pool = require('pg').Pool
 
+// Import ULID
+const ulid = require('ulid');
+
 // Create a connection pool instance with the given configuration options
 const pool = new Pool({
     host: 'localhost',
@@ -38,16 +41,58 @@ expensesRouter
             }
         });
     })
-    // Add a new expenses to the list
+    // Add a new expense to the table expenses
     .post((req, res) => {
-        const addedExpense = addExpenseToDatabase(req.body.amount, req.body.description, req.body.budget_id, req.body.category);
-        if (addedExpense) {
-            res.status(201).send(addedExpense);
-        } else {
-            res.status(400).send({
-                error: "Failed to add expense"
-            });
-        }
+        // Destructure expense_id, category, and amount from the request body
+        const {
+        amount,
+        description,
+        budget_id,
+        category
+        } = req.body;
+
+        // Generate a timestamp and convert it to an ISO string format
+        const timestamp = Date.now();
+        const isoString = new Date(timestamp).toISOString();
+
+        // Generate a ULID
+	  const ulid_id = ulid.ulid();
+
+        // Create a expense object with the provided information and default timestamp and ID values
+        const element = {
+            ulid_id: ulid_id,
+            dt_create: isoString,
+            dt_update: isoString,
+            dt_value: isoString,
+            amount,
+            description,
+            budget_id,
+            category,
+        };
+
+        // Execute a query to insert the new expense into the expenses table
+        pool.query(`
+        -- Define the subquery to insert a new record into the expenses table
+        INSERT INTO expenses (ulid_id, dt_create, dt_update, dt_value, amount, description, budget_id, category)
+        VALUES ($1, to_timestamp($2, 'YYYY-MM-DD"T"HH24:MI:SS.MS'), to_timestamp($3, 'YYYY-MM-DD"T"HH24:MI:SS.MS'), 
+        to_timestamp($4, 'YYYY-MM-DD"T"HH24:MI:SS.MS'), $5, $6, $7, $8);`, 
+        [element.ulid_id, element.dt_create, element.dt_update, 
+        element.dt_value, element.amount, element.description, 
+        element.budget_id, element.category], (err, result) => {
+            // If there is an error, return a 500 status code with an error message
+            if (err) {
+                console.error(err)
+                res.status(500).json({
+                    error: "Error adding expense"
+                });
+            }
+            // If the query is successful, return a 201 status code with a success message
+            else {
+                res.status(201).json({
+                    message: "Expense added successfully"
+                });
+            }
+        });
     });
   
 // Endpoint to handle requests to a specific expenseresource by ID
