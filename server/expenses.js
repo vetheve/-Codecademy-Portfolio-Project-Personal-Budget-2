@@ -97,17 +97,25 @@ expensesRouter
   
 // Endpoint to handle requests to a specific expenseresource by ID
 expensesRouter
-    .route('/:id')
-    // Get a specific expenseby ID
+    .route('/ulid_id/:ulid_id')
+    // Get a specific expense by ID
     .get((req, res) => {
-        const getExpense = getFromDatabaseById(req.params.id)
-        if (getExpense) {
-            res.status(200).send(getExpense);
-        } else {
-            res.status(404).send({
-                error: "ID: Expense not found"
-            });
-        }
+        const ulid_id = req.params.ulid_id
+        // Connect to the PostgreSQL database using the connection pool
+        pool.query(`
+    -- Define the subquery to get a specific expense resource by ulid_id
+    SELECT * FROM expenses WHERE ulid_id  = $1;`, [ulid_id], (err, result) => {
+            if (err) {
+                // If there was an error, return a 500 status code with an error message
+                console.error(err)
+                res.status(500).json({
+                    error: "Error fetching expenses"
+                });
+            } else {
+                // If the query was successful, return a 200 status code with the result
+                res.status(200).json(result.rows[0]);
+            }
+        });
     })
     // Update an existing expense in the list
     .put((req, res) => {
