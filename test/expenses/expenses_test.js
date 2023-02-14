@@ -72,3 +72,47 @@ test('2.3 POST /expenses should add a new expense to the list', async t => {
     // Print the object in the console
     t.log(res.body)
 });
+/*
+// Test to check if the DELETE request to '/expenses/ulid_id/:ulid_id' route delete a specific expense by ID
+test('2.4 DELETE /expenses/ulid_id/:ulid_id should delete a specific expense with the given ID', async t => {
+
+    // Selecting a expense ID to test with
+    const ulid_id = '01GRXNT3KRKRG2Y0YJG5HS8TGF';
+    
+    // Making a DELETE request to the '/expenses/ulid_id/:ulid_id' route with the selected expense ID
+    const res = await request(app).delete(`/expenses/ulid_id/${ulid_id}`);
+    
+    // Asserting that the status code of the response is 204
+    t.is(res.status, 204);
+});
+*/
+
+// Test to check if the PUT request to '/expenses/ulid_id/:ulid_id' route updates a expense in the table expenses
+test('2.5 PUT /expenses/ulid_id/:ulid_id should update a expense in the list', async t => {
+
+    // Generate a timestamp and convert it to an ISO string format
+    const timestamp = Date.now();
+    const isoString = new Date(timestamp).toISOString();
+
+
+    // Selecting a expense ID to test with
+    const ulid_id = "01GRXNJA8PNY4BHFTZZCM0N0CV";
+
+    // Creating a new expense object to update
+    const updatedExpense = {
+        amount: '0',
+        description: 'Carambar',
+        budget_id: "2022-01 Monthly Candy expense",
+        category: "Candy" ,
+        dt_value: isoString            
+    };
+    
+    // Making a PUT request to the '/expenses/ulid_id/:ulid_id' route with the updated expense object
+    const res = await request(app).put(`/expenses/ulid_id/${ulid_id}`).send(updatedExpense);
+
+    // Asserting that the status code of the response is 201
+    t.is(res.status, 201);
+
+    // Print the object in the console
+    t.log(res.body)
+});

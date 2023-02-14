@@ -136,7 +136,7 @@ budgetsRouter
             }
         });
     })
-    // Update a category in an existing budget in the budgets table 
+    // Update an existing budget record in the budgets table 
     .put((req, res) => {
         const budget_id = req.params.budget_id;
         console.log(budget_id)

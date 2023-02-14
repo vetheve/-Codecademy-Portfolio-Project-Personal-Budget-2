@@ -56,7 +56,7 @@ expensesRouter
         const isoString = new Date(timestamp).toISOString();
 
         // Generate a ULID
-	  const ulid_id = ulid.ulid();
+	    const ulid_id = ulid.ulid();
 
         // Create a expense object with the provided information and default timestamp and ID values
         const element = {
@@ -103,7 +103,7 @@ expensesRouter
         const ulid_id = req.params.ulid_id
         // Connect to the PostgreSQL database using the connection pool
         pool.query(`
-    -- Define the subquery to get a specific expense resource by ulid_id
+      -- Define the subquery to get a specific expense resource by ulid_id
     SELECT * FROM expenses WHERE ulid_id  = $1;`, [ulid_id], (err, result) => {
             if (err) {
                 // If there was an error, return a 500 status code with an error message
@@ -117,25 +117,81 @@ expensesRouter
             }
         });
     })
-    // Update an existing expense in the list
-    .put((req, res) => {
-        const updatedExpense = updateInstanceInDatabase('expenses',req.params.id, req.body.item, req.body.value);
-        if (updatedExpense) {
-            res.status(200).send(updatedExpense);
-        } else {
-            res.status(404).send({
-                error: "Failed to update expense"
-            });
-        }
-    })
     // Delete a specific expense from the list
     .delete((req, res) => {
-        const deletedExpense = deleteFromDatabasebyId('expenses',req.params.id);
-        if (deletedBudget) {
-            res.status(204).send(deletedExpense);
-        } else {
-            res.status(404).send({
-                error: "Failed to delete expense"
-            });
-        }
+        const ulid_id = req.params.ulid_id
+        // Connect to the PostgreSQL database using the connection pool
+        pool.query(`
+      -- Define the subquery to delete a specific expense resource by ID
+      DELETE FROM expenses WHERE ulid_id = $1;`, [ulid_id], (err, result) => {
+            if (err) {
+                // If there was an error, return a 500 status code with an error message
+                console.log(err)
+                res.status(500).json({
+                    error: "Error deleting expense"
+                });
+            } else {
+                // If the query was successful, return a 200 status code with a success message
+                res.status(204).json({
+                    message: 'expense deleted successfully'
+                });
+            }
+        });
+    })
+    // Update an existing expense record in the expenses table 
+    .put((req, res) => {
+        const ulid_id = req.params.ulid_id;
+        console.log(ulid_id)
+        // Destructure the object sent from the request body
+        const { amount, description, budget_id, category, dt_value } = req.body;
+
+        // Generate a timestamp and convert it to an ISO string format
+        const timestamp = Date.now();
+        const isoString = new Date(timestamp).toISOString();
+
+        // Execute a query to find the existing expense in the expenses table
+        pool.query(`SELECT * from expenses where ulid_id = $1`, [ulid_id], (err, result) => {
+            // If there is an error, return a 500 status code with an error message
+            if (err) {
+                console.log(err)
+                res.status(500).json({
+                    error: "Error finding expense"
+                });
+            } else if (result.rowCount > 0) {
+                // Execute a query to update the existing expense in the expenses table
+                pool.query(`
+                    -- Define the subquery to update an existing record in the expenses table
+                    UPDATE expenses
+                    SET amount = $1, description = $2, dt_value = to_timestamp($3, 'YYYY-MM-DD"T"HH24:MI:SS.MS'), 
+                    dt_update = to_timestamp($4, 'YYYY-MM-DD"T"HH24:MI:SS.MS'), budget_id = $5, category = $6
+                    WHERE ulid_id = $7;
+                `, [amount, description, dt_value, isoString, budget_id, category, ulid_id], (err, result) => {
+                    // If there is an error, return a 500 status code with an error message
+                    if (err) {
+                        console.log(err)
+                        res.status(500).json({
+                            error: "Error updating expense"
+                        });
+                    }
+                    // If the query is successful, return a 201 status code with a success message
+                    else if (result.rowCount > 0) {
+                        res.status(201).json({
+                            message: "Expense updated successfully"
+                        });
+                    // If there is an error, return a 400 status code with an error message
+                    } else {
+                        console.log(err)
+                        res.status(404).json({
+                            error: "Expense exist but not found "
+                        });
+                    }
+                });
+            // If there is an error, return a 400 status code with an error message
+            } else {
+                console.log(err)
+                res.status(404).json({
+                    error: "Expense not found"
+                });
+            }
+        });
     });
