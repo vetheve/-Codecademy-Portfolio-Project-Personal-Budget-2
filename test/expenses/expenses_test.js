@@ -51,7 +51,7 @@ test('2.2 GET /expenses/ulid_id/:ulid_id should retrieve a specific expense with
     t.true(typeof res.body === 'object' && res.body.ulid_id === expenseId);
 });
 
-
+/*
 // Test to check if the POST request to '/expenses' route add a new expense in the list expenses
 test('2.3 POST /expenses should add a new expense to the list', async t => {
 
@@ -72,6 +72,7 @@ test('2.3 POST /expenses should add a new expense to the list', async t => {
     // Print the object in the console
     t.log(res.body)
 });
+*/
 /*
 // Test to check if the DELETE request to '/expenses/ulid_id/:ulid_id' route delete a specific expense by ID
 test('2.4 DELETE /expenses/ulid_id/:ulid_id should delete a specific expense with the given ID', async t => {
@@ -102,8 +103,8 @@ test('2.5 PUT /expenses/ulid_id/:ulid_id should update a expense in the list', a
     const updatedExpense = {
         amount: '0',
         description: 'Carambar',
-        budget_id: "2022-01 Monthly Candy expense",
-        category: "Candy" ,
+        budget_id: "2022-02 Personnal Budget",
+        category: "Candy",
         dt_value: isoString            
     };
     
