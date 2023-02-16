@@ -5,31 +5,42 @@ const revenuesRouter = require('express').Router();
 const bodyParser = require('body-parser');
 revenuesRouter.use(bodyParser.json());
 
-// Import functions from db.js
-const {
-    getAllFromDatabase,
-    getFromDatabaseById,
-    addRevenueToDatabase,
-    deleteFromDatabasebyId,
-    updateInstanceInDatabase
-} = require('./db.js')
+// Import the required module for creating a connection pool to a PostgreSQL database
+const Pool = require('pg').Pool
+
+// Import ULID
+const ulid = require('ulid');
+
+// Create a connection pool instance with the given configuration options
+const pool = new Pool({
+    host: 'localhost',
+    database: 'balance_budget',
+    port: 5432,
+  });
 
 // Export revenuesRouter for use in other modules
 module.exports = revenuesRouter;
 
 // Endpoint to handle requests for the revenues
 revenuesRouter
-  .route('/')
-    // Get all revenues
+    .route('/')
+    // Endpoint to get all revenues
     .get((req, res) => {
-        const allRevenues = getAllFromDatabase('revenues');
-        if (allRevenues) {
-            res.status(200).send(allRevenues);
-        } else {
-            res.status(404).send({
-                error: "No revenues found"
-            });
-        }
+        // Connect to the PostgreSQL database using the connection pool
+        pool.query(`
+    -- Define the subquery to get the total records of revenues
+    SELECT * FROM revenues;`, (err, result) => {
+            if (err) {
+                // If there was an error, return a 500 status code with an error message
+                console.log(err)
+                res.status(500).json({
+                    error: "Error fetching revenues"
+                });
+            } else {
+                // If the query was successful, return a 200 status code with the result
+                res.status(200).json(result.rows);
+            }
+        });
     })
     // Add a new revenues to the list
     .post((req, res) => {
