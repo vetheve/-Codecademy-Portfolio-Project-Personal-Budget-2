@@ -114,17 +114,6 @@ revenuesRouter
             }
         });
     })
-    // Update an existing revenue from the list
-    .put((req, res) => {
-        const updatedRevenue = updateInstanceInDatabase('revenues',req.params.id, req.body.item, req.body.value);
-        if (updatedRevenue) {
-            res.status(200).send(updatedRevenue);
-        } else {
-            res.status(404).send({
-                error: "Failed to update revenue"
-            });
-        }
-    })
     // Delete a specific revenue from the list
     .delete((req, res) => {
         const ulid_id = req.params.ulid_id
@@ -141,8 +130,65 @@ revenuesRouter
             } else {
                 // If the query was successful, return a 200 status code with a success message
                 res.status(204).json({
-                    message: 'revenue deleted successfully'
+                    message: 'Revenue deleted successfully'
                 });
             }
         });
     })
+    // Update an existing revenue record in the revenues table 
+    .put((req, res) => {
+        const ulid_id = req.params.ulid_id;
+        console.log(ulid_id)
+        // Destructure the object sent from the request body
+        const { amount, description, dt_value } = req.body;
+
+        // Generate a timestamp and convert it to an ISO string format
+        const timestamp = Date.now();
+        const isoString = new Date(timestamp).toISOString();
+
+        // Execute a query to find the existing revenue in the revenues table
+        pool.query(`SELECT * from revenues where ulid_id = $1`, [ulid_id], (err, result) => {
+            // If there is an error, return a 500 status code with an error message
+            if (err) {
+                console.log(err)
+                res.status(500).json({
+                    error: "Error finding revenue"
+                });
+            } else if (result.rowCount > 0) {
+                // Execute a query to update the existing revenue in the revenues table
+                pool.query(`
+                    -- Define the subquery to update an existing record in the revenues table
+                    UPDATE revenues
+                    SET amount = $1, description = $2, dt_value = to_timestamp($3, 'YYYY-MM-DD"T"HH24:MI:SS.MS'), 
+                    dt_update = to_timestamp($4, 'YYYY-MM-DD"T"HH24:MI:SS.MS')
+                    WHERE ulid_id = $5;
+                `, [amount, description, dt_value, isoString, ulid_id], (err, result) => {
+                    // If there is an error, return a 500 status code with an error message
+                    if (err) {
+                        console.log(err)
+                        res.status(500).json({
+                            error: "Error updating revenue"
+                        });
+                    }
+                    // If the query is successful, return a 201 status code with a success message
+                    else if (result.rowCount > 0) {
+                        res.status(201).json({
+                            message: "revenue updated successfully"
+                        });
+                    // If there is an error, return a 400 status code with an error message
+                    } else {
+                        console.log(err)
+                        res.status(404).json({
+                            error: "Revenue exist but not found "
+                        });
+                    }
+                });
+            // If there is an error, return a 400 status code with an error message
+            } else {
+                console.log(err)
+                res.status(404).json({
+                    error: "Revenue not found"
+                });
+            }
+        });
+    });

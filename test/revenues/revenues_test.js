@@ -54,20 +54,10 @@ test('3.2 GET /revenues/ulid_id/:ulid_id should retrieve a specific budget with 
     t.true(typeof res.body === 'object');
 });
 
-// Test to check if the DELETE request to '/revenues/ulid_id/:ulid_id' route delete a specific revenue by ID
-test('2.4 DELETE /revenues/ulid_id/:ulid_id should delete a specific revenue with the given ID', async t => {
 
-    // Selecting a revenue ID to test with
-    const ulid_id = '01GSF2QXTK9RX0C130Q92PFNZC';
-    
-    // Making a DELETE request to the '/revenues/ulid_id/:ulid_id' route with the selected revenue ID
-    const res = await request(app).delete(`/revenues/ulid_id/${ulid_id}`);
-    
-    // Asserting that the status code of the response is 204
-    t.is(res.status, 204);
-});
 
 /*
+
 // Test to check if the POST request to '/revenues' route add a new revenue in the list revenues
 test('3.3 POST /revenues should add a new revenue to the list', async t => {
 
@@ -86,4 +76,46 @@ test('3.3 POST /revenues should add a new revenue to the list', async t => {
     // Print the object in the console
     t.log(res.body)
 });
+
+// Test to check if the DELETE request to '/revenues/ulid_id/:ulid_id' route delete a specific revenue by ID
+test('3.4 DELETE /revenues/ulid_id/:ulid_id should delete a specific revenue with the given ID', async t => {
+
+    // Selecting a revenue ID to test with
+    const ulid_id = '01GSF2QXTK9RX0C130Q92PFNZC';
+    
+    // Making a DELETE request to the '/revenues/ulid_id/:ulid_id' route with the selected revenue ID
+    const res = await request(app).delete(`/revenues/ulid_id/${ulid_id}`);
+    
+    // Asserting that the status code of the response is 204
+    t.is(res.status, 204);
+});
 */
+
+
+// Test to check if the PUT request to '/revenues/ulid_id/:ulid_id' route updates a revenue in the table revenues
+test('3.5 PUT /revenues/ulid_id/:ulid_id should update a revenue in the list', async t => {
+
+    // Generate a timestamp and convert it to an ISO string format
+    const timestamp = Date.now();
+    const isoString = new Date(timestamp).toISOString();
+
+
+    // Selecting a revenue ID to test with
+    const ulid_id = "01GSF6ESJFPW1J87TGQEG58J6N";
+
+    // Creating a new revenue object to update
+    const updatedrevenue = {
+        amount: '0',
+        description: 'Carambar',
+        dt_value: isoString            
+    };
+    
+    // Making a PUT request to the '/revenues/ulid_id/:ulid_id' route with the updated revenue object
+    const res = await request(app).put(`/revenues/ulid_id/${ulid_id}`).send(updatedrevenue);
+
+    // Asserting that the status code of the response is 201
+    t.is(res.status, 201);
+
+    // Print the object in the console
+    t.log(res.body)
+});
