@@ -127,12 +127,22 @@ revenuesRouter
     })
     // Delete a specific revenue from the list
     .delete((req, res) => {
-        const deletedRevenue = deleteFromDatabasebyId(req.params.id);
-        if (deletedRevenue) {
-            res.status(204).send(deletedRevenue);
-        } else {
-            res.status(404).send({
-                error: "Failed to delete revenue"
-            });
-        }
-    });
+        const ulid_id = req.params.ulid_id
+        // Connect to the PostgreSQL database using the connection pool
+        pool.query(`
+      -- Define the subquery to delete a specific revenue resource by ID
+      DELETE FROM revenues WHERE ulid_id = $1;`, [ulid_id], (err, result) => {
+            if (err) {
+                // If there was an error, return a 500 status code with an error message
+                console.log(err)
+                res.status(500).json({
+                    error: "Error deleting revenue"
+                });
+            } else {
+                // If the query was successful, return a 200 status code with a success message
+                res.status(204).json({
+                    message: 'revenue deleted successfully'
+                });
+            }
+        });
+    })

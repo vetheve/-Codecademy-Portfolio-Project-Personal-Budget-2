@@ -54,6 +54,19 @@ test('3.2 GET /revenues/ulid_id/:ulid_id should retrieve a specific budget with 
     t.true(typeof res.body === 'object');
 });
 
+// Test to check if the DELETE request to '/revenues/ulid_id/:ulid_id' route delete a specific revenue by ID
+test('2.4 DELETE /revenues/ulid_id/:ulid_id should delete a specific revenue with the given ID', async t => {
+
+    // Selecting a revenue ID to test with
+    const ulid_id = '01GSF2QXTK9RX0C130Q92PFNZC';
+    
+    // Making a DELETE request to the '/revenues/ulid_id/:ulid_id' route with the selected revenue ID
+    const res = await request(app).delete(`/revenues/ulid_id/${ulid_id}`);
+    
+    // Asserting that the status code of the response is 204
+    t.is(res.status, 204);
+});
+
 /*
 // Test to check if the POST request to '/revenues' route add a new revenue in the list revenues
 test('3.3 POST /revenues should add a new revenue to the list', async t => {
