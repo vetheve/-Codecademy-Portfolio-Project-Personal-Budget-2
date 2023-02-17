@@ -29,5 +29,24 @@ test('3.1 GET /revenues should return an array of all revenues', async t => {
     t.true(Array.isArray(res.body));
 
     // Print the array in the console
+    //t.log(res.body)
+});
+
+// Test to check if the POST request to '/revenues' route add a new revenue in the list revenues
+test('3.3 POST /revenues should add a new revenue to the list', async t => {
+
+    // Creating a new revenue object to add
+    const newRevenue = {
+        amount: '0',
+        description: 'Salary for January 2022'
+    };
+
+    // Making a POST request to the '/revenues' route with the new revenue object
+    const res = await request(app).post('/revenues').send(newRevenue);
+
+    // Asserting that the status code of the response is 201
+    t.is(res.status, 201);
+
+    // Print the object in the console
     t.log(res.body)
 });
