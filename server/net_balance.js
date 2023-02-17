@@ -15,13 +15,6 @@ const pool = new Pool({
   port: 5432,
 });
 
-// Import functions from db.js
-const {
-    filterNetBalanceByMonth,
-    filterNetBalanceByYear,
-    calculateNetBalance
-} = require('./db.js')
-
 // Export balanceRouter for use in other modules
 module.exports = netBalanceRouter;
 

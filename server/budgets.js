@@ -15,15 +15,6 @@ const pool = new Pool({
     port: 5432,
   });
 
-// Import functions from db.js
-const {
-    getAllFromDatabase,
-    getFromDatabaseById,
-    addBudgetToDatabase,
-    deleteFromDatabasebyId,
-    updateInstanceInDatabase
-} = require('./db.js');
-
 // Export budgetsRouter for use in other modules
 module.exports = budgetsRouter;
 

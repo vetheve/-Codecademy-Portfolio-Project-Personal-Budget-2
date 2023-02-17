@@ -15,14 +15,6 @@ const pool = new Pool({
   port: 5432,
 });
 
-// Import functions from db.js
-const {
-    getFromDatabaseByCategory,
-    filterBudgetBalanceByMonth,
-    filterBudgetBalanceByYear,
-    calculateBudgetBalance
-} = require('./db.js')
-
 // Export balanceRouter for use in other modules
 module.exports = budgetBalanceRouter;
 

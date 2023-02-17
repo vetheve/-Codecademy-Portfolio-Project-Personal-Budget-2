@@ -9,12 +9,6 @@ const app = express();
 // Use the apiRouter with the '/api' route
 app.use('/', apiRouter);
 
-// Import functions from db.js
-const {
-    getFromDatabaseByItem
-} = require('../../server/db.js');
-
-
 /*BUDGET BALANCE*/
 
 // Test to check if the Get request to '/budgetbalance' route returns the total budget balance
