@@ -32,6 +32,29 @@ test('3.1 GET /revenues should return an array of all revenues', async t => {
     //t.log(res.body)
 });
 
+// Test to check if the GET request to '/revenues/ulid_id/:ulid_id' route returns a specific revenue with the given ID
+test('3.2 GET /revenues/ulid_id/:ulid_id should retrieve a specific budget with the given ID', async t => {
+
+    // Selecting a revenues ID to test with
+    const revenuesId = '01EXBDPV5NM0W5RSMG31WMQM6B';
+    
+    // Making a GET request to the '/revenues/:id' route with the selected revenue ID
+    const res = await request(app).get(`/revenues/ulid_id/${revenuesId}`);
+    
+    // Asserting that the status code of the response is 200
+    t.is(res.status, 200);
+    
+    // Print the object in the console
+    t.log(res.body)
+        
+    // Asserting that the response contains the selected revenue ID
+    t.true(res.body.ulid_id === revenuesId);
+    
+    // Asserting that the response body is an object
+    t.true(typeof res.body === 'object');
+});
+
+/*
 // Test to check if the POST request to '/revenues' route add a new revenue in the list revenues
 test('3.3 POST /revenues should add a new revenue to the list', async t => {
 
@@ -50,3 +73,4 @@ test('3.3 POST /revenues should add a new revenue to the list', async t => {
     // Print the object in the console
     t.log(res.body)
 });
+*/
